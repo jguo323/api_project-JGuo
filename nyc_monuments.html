@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <style> .btn{border:1px solid black; padding:5px;display:inline-block} 
+	body {
+	background-image: url('blue_background.jpg');
+  	background-repeat: no-repeat;
+	background-attachment: fixed;
+  	background-size:100% 100%;
+	}
+	</style>
+	<style type = "text/css">
+	.chartBox{
+		width: 600px;
+	}
+	</style>
+	<style type ="text/css">
+	.chartBox2{
+		width: 800px;
+		height:600px;
+	}
+	</style>
+</head>
+<body>
+	<div class="container">
+        <h1 style="text-align:center;"> NYC Monuments</h1>
+            <div class="row">
+                <div class="col-md-2">
+                </div>
+                <div id="page1" class="col-md-8">
+            <div class = 'column'>
+                    <h3 style="text-align: center;">  Please press this button to display the two graphs </h3>
+                        
+                    <p>  The first graph shows a pie chart of the 5 boroughs of New York 
+                        (Staten Island, Queens, Manhattan, Brooklyn, the Bronx). This chart will show the number of monuments in each borough and how they compare to each other.</p> 
+                        
+                    <p> The second graph is a line chart of two lines representing the boroughs with the most amount of monuments. 
+                        It will show the pace at which each borough erect monuments over the past 100 years. The x axis represents the year and 
+                        the y axis displays the number of monuments that exists in the borough that given year.</p>
+                    </div>
+                    <figure class="half" style="display:flex">
+                        <img style="width:400px" src="monument1.jpg">
+                        <img style="width:400px" src="monument2.jpg">
+                    </figure>
+                    <p style="text-align: center;"><input type="button" id="btn_1" value="Refresh!" class= "btn btn-primary"></p>
+                    <div class = "chartBox1">
+                      <canvas id="myChart" ></canvas>
+                      </div>
+                    <p style="text-align: center;"></p>
+                      <div class = "chartBox1">
+                        <canvas id="myChart1" ></canvas>
+                        </div>
+                    <br><br>	
+		
+</div> 
+<div class = "chartBox">
+<canvas id="myChart" ></canvas>
+</div>
+<div class ="chartBox2">
+<canvas id="myChart1" width="40" height="25"></canvas>
+</div>
+
+</body>
+<script>
+
+getBrooklyn();
+getManhattan();
+getTheBronx();
+getQueens();
+getStatenIsland();
+Brooklynyears();
+Manhattanyears();
+
+function chart(){ x_axis();	
+	var ctx = document.getElementById('myChart').getContext('2d');
+	
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['Brooklyn', 'Manhattan', 'The Bronx', 'Queens', 'Staten Island'],
+        datasets: [{
+            label: 'Composition of NYC momuments by borough',
+            data: [answer1,answer2,answer3, answer4,answer5],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+				'rgba(128, 0, 0, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 100, 18, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+				'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+            ],
+            borderWidth: 1
+        }]
+    },
+   
+});	
+var ctx1 = document.getElementById('myChart1').getContext('2d');
+var myChart1 = new Chart(ctx1, {
+    type: 'line',
+    data: {
+        labels: globalarray,
+        datasets: [{
+            label: 'Brooklyn',
+            data: array1,
+            backgroundColor: [
+                'rgba(145, 80, 132, 5)',
+            ],
+            borderColor: [
+                'rgba(255, 60, 100, 6)',
+            ],
+            borderWidth: 1
+			
+			
+        },
+		{
+            label: 'Manhattan',
+            data: array2,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+            ],
+            borderColor: [
+                'rgba(150, 99, 132, 1)',
+            ],
+            borderWidth: 1
+        }
+	]
+    },
+	options: {
+    scales: {
+      y: {
+		ticks: {
+			color: 'blue'
+		},
+        grid: {
+          color: 'blue'
+        }
+      },
+      x: {
+		ticks: {
+			color: 'blue'
+		},
+        grid: {
+          color: 'blue'
+        }
+      }
+    }
+  }
+});	
+}
+
+var currentYear = new Date().getFullYear();
+var globalarray = [];
+function x_axis (){
+    for(let i = 1922; i < currentYear; i++){
+        globalarray.push(i);
+    }
+}
+
+var answer1 = 0;
+function getBrooklyn(){
+$.getJSON("https://data.cityofnewyork.us/resource/6rrm-vxj9.json", function(result){
+        let textcompare = result[0]["borough"];
+        let answer = 0;
+        console.log(result);
+        for(let i=0; i < result.length; i++){
+            if (textcompare == result[i]["borough"]){
+                textcompare = result[i]["borough"]
+                answer = answer + 1;
+                console.log(result[i]["borough"])
+            }
+        }
+        console.log(answer)
+        answer1 = answer;
+    });
+}
+
+var answer2 = 0;
+function getManhattan(){
+$.getJSON("https://data.cityofnewyork.us/resource/6rrm-vxj9.json", function(result){
+        let textcompare = result[1]["borough"];
+        let answer = 0;
+        console.log(result);
+        for(let i=0; i < result.length;i++){
+            if (textcompare == result[i]["borough"]){
+                textcompare = result[i]["borough"]
+                answer = answer + 1;
+                console.log(result[i]["borough"])
+            }
+        }
+        answer2 = answer
+    });
+}
+
+var answer3 = 0;
+function getTheBronx(){
+$.getJSON("https://data.cityofnewyork.us/resource/6rrm-vxj9.json", function(result){
+        let textcompare = result[2]["borough"];
+        let answer = 0;
+        console.log(result);
+        for(let i=0; i < result.length;i++){
+            if (textcompare == result[i]["borough"]){
+                textcompare = result[i]["borough"]
+                answer = answer + 1;
+                console.log(result[i]["borough"])
+            }
+        }
+        answer3 = answer
+    });
+}
+
+function getQueens(){
+$.getJSON("https://data.cityofnewyork.us/resource/6rrm-vxj9.json", function(result){
+        let textcompare = result[22]["borough"];
+        let answer = 0;
+        console.log(result);
+        for(let i=0; i < result.length;i++){
+            if (textcompare == result[i]["borough"]){
+                textcompare = result[i]["borough"]
+                answer = answer + 1;
+                console.log(result[i]["borough"])
+            }
+        }
+        answer4 = answer
+    });
+}
+
+function getStatenIsland(){
+$.getJSON("https://data.cityofnewyork.us/resource/6rrm-vxj9.json", function(result){
+        let textcompare = result[26]["borough"];
+        let answer = 0;
+        console.log(result);
+        for(let i=0; i < result.length;i++){
+            if (textcompare == result[i]["borough"]){
+                textcompare = result[i]["borough"]
+                answer = answer + 1;
+                console.log(result[i]["borough"])
+            }
+        }
+        answer5 = answer
+    });
+}
+   
+var answer_1 = 0;
+var year1 = "";
+// each element of array corresponds to a year starting at 1850 to 2022
+var array1= Array(100).fill(0);  // initialize an array of size 172 with values of 0 to increment for every monument
+function Brooklynyears(){
+$.getJSON("https://data.cityofnewyork.us/resource/6rrm-vxj9.json", function(result){
+        let textcompare = result[0]["borough"];
+        let counter = 0;
+        let year = result[0]["dedicated"];
+        let answer = 0;
+        console.log(result);
+        // for loop iterates through the monuments erected in no particular order
+        for(let i=0; i < result.length; i++){
+            if (textcompare == result[i]["borough"]){
+                textcompare = result[i]["borough"]
+                year = result[i]["dedicated"]
+                answer = answer + 1;
+                // if statement to determine which year to increment by 1 for a statue dedicated
+                if(parseInt(year)){
+                    array1[parseInt(year)- 1922]++}  // increments element by 1 for each monument dedicated that year
+                console.log(result[i]["borough"])
+                console.log(result[i]["dedicated"])
+            }
+        }
+        for(let j=1;j< array1.length; j++){
+            array1[j] += array1[j-1]
+        }
+        answer_1 = answer;
+        year1 =year;
+
+    });
+}
+
+var answer_2 = 0;
+var year2 = "";
+var array2= Array(100).fill(0);
+function Manhattanyears(){
+$.getJSON("https://data.cityofnewyork.us/resource/6rrm-vxj9.json", function(result){
+        let textcompare = result[1]["borough"];
+        let year = result[1]["dedicated"];
+        let answer = 0;
+        console.log(result);
+        for(let i=0; i < result.length;i++){
+            if (textcompare == result[i]["borough"]){
+                textcompare = result[i]["borough"]
+                year= result[i]["dedicated"]
+                answer = answer + 1;
+                if(parseInt(year)){
+                    array2[parseInt(year)- 1922]++}
+                console.log(result[i]["borough"])
+                console.log(result[i]["dedicated"])
+            }
+        }
+        for(let j=1; j< array2.length; j++){ //adds up monument count
+            array2[j] += array2[j-1]
+        }
+        answer_2 = answer
+        year2 = year;
+    });
+}
+
+$('#btn_1').click(function(){
+    chart();
+});
+
+</script>
+</html>
