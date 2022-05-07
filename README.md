@@ -1,1 +1,2 @@
 # api_project-JGuo
+The first graph shows a pie chart of the 5 boroughs of New York (Staten Island, Queens, Manhattan, Brooklyn, the Bronx). This chart will show the number of monuments in each borough and how they compare to each other.  The second graph is a line chart of two lines representing the boroughs with the most amount of monuments. It will show the pace at which each borough erect monuments over the past 100 years. The x axis represents the year and the y axis displays the number of monuments that exists in the borough that given year.
